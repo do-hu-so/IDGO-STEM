@@ -21,10 +21,10 @@ import { products, ProductType, GradeLevel } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
 const AllProducts = () => {
-    // --- States ---
-    const [selectedTypes, setSelectedTypes] = useState<ProductType[]>([]);
-    const [selectedGrades, setSelectedGrades] = useState<GradeLevel[]>([]);
     const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
+
+    // Check admin status
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
 
     // --- Constants ---
     const typeLabels: Record<ProductType, string> = {
@@ -283,30 +283,41 @@ const AllProducts = () => {
                                                                             </div>
                                                                         )}
                                                                     </div>
-                                                                    <Dialog>
-                                                                        <DialogTrigger asChild>
-                                                                            <Button
-                                                                                variant="ghost"
-                                                                                size="sm"
-                                                                                className="text-muted-foreground hover:text-primary"
-                                                                            >
-                                                                                <Eye className="w-4 h-4 mr-1" /> Xem trước
-                                                                            </Button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 overflow-hidden bg-black/95 border-none">
-                                                                            <div className="p-4 flex justify-between items-center text-white bg-white/10 backdrop-blur-sm z-10 absolute w-full top-0 left-0">
-                                                                                <h3 className="font-semibold truncate pr-8">{product.title}</h3>
-                                                                            </div>
-                                                                            <div className="flex-grow w-full h-full pt-14 pb-4 px-4 flex items-center justify-center">
-                                                                                <iframe
-                                                                                    src={getEmbedUrl(product.previewUrl)}
-                                                                                    className="w-full h-full rounded-lg bg-white"
-                                                                                    allow="autoplay"
-                                                                                    title="Preview"
-                                                                                ></iframe>
-                                                                            </div>
-                                                                        </DialogContent>
-                                                                    </Dialog>
+                                                                    {isAdmin ? (
+                                                                        <Dialog>
+                                                                            <DialogTrigger asChild>
+                                                                                <Button
+                                                                                    variant="ghost"
+                                                                                    size="sm"
+                                                                                    className="text-muted-foreground hover:text-primary"
+                                                                                >
+                                                                                    <Eye className="w-4 h-4 mr-1" /> Xem trước
+                                                                                </Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 overflow-hidden bg-black/95 border-none">
+                                                                                <div className="p-4 flex justify-between items-center text-white bg-white/10 backdrop-blur-sm z-10 absolute w-full top-0 left-0">
+                                                                                    <h3 className="font-semibold truncate pr-8">{product.title}</h3>
+                                                                                </div>
+                                                                                <div className="flex-grow w-full h-full pt-14 pb-4 px-4 flex items-center justify-center">
+                                                                                    <iframe
+                                                                                        src={getEmbedUrl(product.previewUrl)}
+                                                                                        className="w-full h-full rounded-lg bg-white"
+                                                                                        allow="autoplay"
+                                                                                        title="Preview"
+                                                                                    ></iframe>
+                                                                                </div>
+                                                                            </DialogContent>
+                                                                        </Dialog>
+                                                                    ) : (
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="text-muted-foreground hover:text-primary"
+                                                                            onClick={() => toast.error("Vui lòng thanh toán trước khi xem")}
+                                                                        >
+                                                                            <Eye className="w-4 h-4 mr-1" /> Xem trước
+                                                                        </Button>
+                                                                    )}
                                                                 </div>
 
                                                                 <Button

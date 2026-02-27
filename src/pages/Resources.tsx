@@ -22,6 +22,9 @@ const Resources = () => {
     const { category, type } = useParams<{ category: AgeCategory; type: ResourceType }>();
     const navigate = useNavigate();
 
+    // Check admin status
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
     // Default to first category if invalid
     const activeCategory = category || '6-8';
     const activeType = type || 'books';
@@ -136,26 +139,36 @@ const Resources = () => {
                 </CardContent>
 
                 <CardFooter className="p-4 pt-0 gap-2">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="flex-1 gap-2 hover:border-primary hover:text-primary">
-                                <Eye className="w-4 h-4" /> Xem trước
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 overflow-hidden bg-black/95 border-none">
-                            <div className="p-4 flex justify-between items-center text-white bg-white/10 backdrop-blur-sm z-10 absolute w-full top-0 left-0">
-                                <h3 className="font-semibold truncate pr-8">{item.title}</h3>
-                            </div>
-                            <div className="flex-grow w-full h-full pt-14 pb-4 px-4 flex items-center justify-center">
-                                <iframe
-                                    src={getEmbedUrl(item.previewUrl)}
-                                    className="w-full h-full rounded-lg bg-white"
-                                    allow="autoplay"
-                                    title="Preview"
-                                ></iframe>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                    {isAdmin ? (
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="flex-1 gap-2 hover:border-primary hover:text-primary">
+                                    <Eye className="w-4 h-4" /> Xem trước
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 overflow-hidden bg-black/95 border-none">
+                                <div className="p-4 flex justify-between items-center text-white bg-white/10 backdrop-blur-sm z-10 absolute w-full top-0 left-0">
+                                    <h3 className="font-semibold truncate pr-8">{item.title}</h3>
+                                </div>
+                                <div className="flex-grow w-full h-full pt-14 pb-4 px-4 flex items-center justify-center">
+                                    <iframe
+                                        src={getEmbedUrl(item.previewUrl)}
+                                        className="w-full h-full rounded-lg bg-white"
+                                        allow="autoplay"
+                                        title="Preview"
+                                    ></iframe>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            className="flex-1 gap-2 hover:border-primary hover:text-primary"
+                            onClick={() => toast.error("Vui lòng thanh toán trước khi xem")}
+                        >
+                            <Eye className="w-4 h-4" /> Xem trước
+                        </Button>
+                    )}
 
                     <Button
                         className="flex-1 gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground"

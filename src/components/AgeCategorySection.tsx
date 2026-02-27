@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const ageCategories = [
   {
@@ -53,6 +54,16 @@ const getCategorySlug = (age: string) => {
 };
 
 const AgeCategorySection = () => {
+  // Check admin status
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+  const handleLinkClick = (e: React.MouseEvent) => {
+    if (!isAdmin) {
+      e.preventDefault();
+      toast.error("Vui lòng thanh toán trước khi xem");
+    }
+  };
+
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
@@ -106,25 +117,25 @@ const AgeCategorySection = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
                       <DropdownMenuItem asChild>
-                        <Link to={`/tai-nguyen/${getCategorySlug(category.age)}/books`} className="cursor-pointer w-full flex items-center">
+                        <Link onClick={handleLinkClick} to={`/tai-nguyen/${getCategorySlug(category.age)}/books`} className="cursor-pointer w-full flex items-center">
                           <Book className="w-4 h-4 mr-2" />
                           Tài liệu
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to={`/tai-nguyen/${getCategorySlug(category.age)}/code`} className="cursor-pointer w-full flex items-center">
+                        <Link onClick={handleLinkClick} to={`/tai-nguyen/${getCategorySlug(category.age)}/code`} className="cursor-pointer w-full flex items-center">
                           <Code className="w-4 h-4 mr-2" />
                           Code
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to={`/tai-nguyen/${getCategorySlug(category.age)}/videos`} className="cursor-pointer w-full flex items-center">
+                        <Link onClick={handleLinkClick} to={`/tai-nguyen/${getCategorySlug(category.age)}/videos`} className="cursor-pointer w-full flex items-center">
                           <Video className="w-4 h-4 mr-2" />
                           Video kết quả
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to={`/tai-nguyen/${getCategorySlug(category.age)}/ppt`} className="cursor-pointer w-full flex items-center">
+                        <Link onClick={handleLinkClick} to={`/tai-nguyen/${getCategorySlug(category.age)}/ppt`} className="cursor-pointer w-full flex items-center">
                           <Presentation className="w-4 h-4 mr-2" />
                           PowerPoint bài giảng
                         </Link>

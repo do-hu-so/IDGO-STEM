@@ -19,6 +19,20 @@ const Login = () => {
         setLoading(true);
 
         try {
+            if (email === "adminidgostem" && password === "idgostemtqu") {
+                localStorage.setItem("isAdmin", "true");
+                navigate("/");
+                toast({
+                    title: "Đăng nhập thành công",
+                    description: "Chào mừng quản trị viên!",
+                });
+                setLoading(false);
+                return;
+            }
+
+            // Clear admin status for regular users
+            localStorage.removeItem("isAdmin");
+
             const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -63,11 +77,11 @@ const Login = () => {
                 <CardContent>
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">Email hoặc Tên đăng nhập</Label>
                             <Input
                                 id="email"
-                                type="email"
-                                placeholder="name@example.com"
+                                type="text"
+                                placeholder="name@example.com hoặc Tên đăng nhập"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
