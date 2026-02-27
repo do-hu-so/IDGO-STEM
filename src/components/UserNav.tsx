@@ -17,12 +17,20 @@ export function UserNav() {
     const { user, signOut } = useAuth();
     const navigate = useNavigate();
 
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
     const handleLogout = async () => {
+        if (isAdmin) {
+            localStorage.removeItem("isAdmin");
+            navigate("/");
+            window.location.reload(); // Refresh to clear state properly
+            return;
+        }
         await signOut();
         navigate("/");
     };
 
-    if (!user) {
+    if (!user && !isAdmin) {
         return (
             <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
@@ -35,23 +43,26 @@ export function UserNav() {
         );
     }
 
-    const initials = user.email?.slice(0, 2).toUpperCase() || "U";
+    const email = isAdmin ? "adminidgostem" : (user?.email || "");
+    const initials = isAdmin ? "AD" : (email.slice(0, 2).toUpperCase() || "U");
+    const fullName = isAdmin ? "Quản trị viên" : (user?.user_metadata?.full_name || "User");
+    const avatarUrl = isAdmin ? "" : user?.user_metadata?.avatar_url;
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
-                        <AvatarFallback>{initials}</AvatarFallback>
+                        {avatarUrl && <AvatarImage src={avatarUrl} alt={email} />}
+                        <AvatarFallback className={isAdmin ? "bg-primary text-white" : ""}>{initials}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || "User"}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        <p className="text-sm font-medium leading-none">{fullName}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{email}</p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

@@ -22,6 +22,8 @@ import { useCart } from "@/context/CartContext";
 
 const AllProducts = () => {
     const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
+    const [selectedTypes, setSelectedTypes] = useState<ProductType[]>([]);
+    const [selectedGrades, setSelectedGrades] = useState<GradeLevel[]>([]);
 
     // Check admin status
     const isAdmin = localStorage.getItem("isAdmin") === "true";
