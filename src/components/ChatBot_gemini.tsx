@@ -16,7 +16,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Xin chào! Mình là ScratchBot 🤖 Mình có thể giúp bạn tìm hiểu về lập trình Scratch, tư vấn sản phẩm, hoặc hướng dẫn sử dụng tài liệu. Hãy hỏi mình nhé!",
+      text: "Xin chào! Mình là IDOG-STEM BOT 🤖 Mình có thể giúp bạn tìm hiểu về lập trình Scratch, tư vấn sản phẩm, hoặc hướng dẫn sử dụng tài liệu. Hãy hỏi mình nhé!",
       isBot: true,
     },
   ]);
@@ -106,7 +106,7 @@ const ChatBot = () => {
             <div className="bg-primary p-4 flex items-center gap-3">
               <img src={robotTeacher} alt="ScratchBot" className="w-12 h-12 rounded-full bg-primary-foreground/20" />
               <div className="flex-grow">
-                <h3 className="font-bold text-primary-foreground">ScratchBot</h3>
+                <h3 className="font-bold text-primary-foreground">IDOG-STEM BOT</h3>
                 <p className="text-primary-foreground/80 text-sm">Trợ lý học tập AI</p>
               </div>
               <button
@@ -135,7 +135,7 @@ const ChatBot = () => {
                     {message.isBot && (
                       <div className="flex items-center gap-2 mb-1">
                         <Bot className="w-4 h-4" />
-                        <span className="text-xs font-semibold">ScratchBot</span>
+                        <span className="text-xs font-semibold">IDOG-STEM BOT</span>
                       </div>
                     )}
                     <div className="text-sm prose prose-sm max-w-none dark:prose-invert">

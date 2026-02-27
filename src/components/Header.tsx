@@ -33,7 +33,7 @@ const Header = () => {
               <span className="text-white font-black text-xl">S</span>
             </div>
             <span className="font-black text-xl text-slate-800">
-              Scratch<span className="text-primary">Kids</span>
+              IDGO<span className="text-primary">-STEM</span>
             </span>
           </motion.a>
 
