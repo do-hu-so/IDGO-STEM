@@ -15,15 +15,15 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-black text-xl">S</span>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center shadow-lg shadow-primary/20">
+                <span className="text-white font-black text-xl">S</span>
               </div>
               <span className="font-black text-xl">
-                Scratch<span className="text-primary">Kids</span>
+                IDGO<span className="text-primary">-STEM</span>
               </span>
             </div>
             <p className="text-background/70 mb-4">
-              Nền tảng học lập trình Scratch hàng đầu Việt Nam dành cho trẻ em và giáo viên.
+              Nền tảng học liệu số Tích hợp STEM hỗ trợ giáo viên tiểu học dạy lập trình.
             </p>
             <div className="flex gap-3">
               <a href="#" className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
@@ -89,7 +89,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-5 h-5 flex-shrink-0" />
-                <span>contact@scratchkids.vn</span>
+                <span>contact@idgostem.vn</span>
               </li>
             </ul>
           </motion.div>
@@ -98,7 +98,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-background/50 text-sm">
-            © {currentYear} ScratchKids. Tất cả quyền được bảo lưu.
+            © {currentYear} IDGO-STEM. Tất cả quyền được bảo lưu.
           </p>
           <div className="flex gap-6 text-sm text-background/50">
             <a href="#" className="hover:text-primary transition-colors">Điều khoản sử dụng</a>

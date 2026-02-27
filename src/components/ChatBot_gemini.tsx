@@ -104,7 +104,7 @@ const ChatBot = () => {
           >
             {/* Header */}
             <div className="bg-primary p-4 flex items-center gap-3">
-              <img src={robotTeacher} alt="ScratchBot" className="w-12 h-12 rounded-full bg-primary-foreground/20" />
+              <img src={robotTeacher} alt="IDGO-STEM Bot" className="w-12 h-12 rounded-full bg-primary-foreground/20" />
               <div className="flex-grow">
                 <h3 className="font-bold text-primary-foreground">IDOG-STEM BOT</h3>
                 <p className="text-primary-foreground/80 text-sm">Trợ lý học tập AI</p>

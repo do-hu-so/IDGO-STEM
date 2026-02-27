@@ -82,7 +82,7 @@ const Contact = () => {
                             className="text-center mb-12"
                         >
                             <h2 className="text-3xl font-bold text-slate-900 mb-4">Đội ngũ sáng lập</h2>
-                            <p className="text-slate-600">Những người tâm huyết xây dựng nền tảng Scratch Kid TQU</p>
+                            <p className="text-slate-600">Những người tâm huyết xây dựng nền tảng IDGO-STEM</p>
                         </motion.div>
 
                         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -111,8 +111,8 @@ const Contact = () => {
                                             </div>
                                             <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-600">
                                                 <Mail className="w-4 h-4" />
-                                                <a href="mailto:XQ-Scratch@TQU.vn" className="hover:text-primary transition-colors">
-                                                    XQ-Scratch@TQU.vn
+                                                <a href="mailto:XQ@idgostem.vn" className="hover:text-primary transition-colors">
+                                                    XQ@idgostem.vn
                                                 </a>
                                             </div>
                                         </div>
@@ -145,8 +145,8 @@ const Contact = () => {
                                             </div>
                                             <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-600">
                                                 <Mail className="w-4 h-4" />
-                                                <a href="mailto:HT-Scratch@TQU.vn" className="hover:text-primary transition-colors">
-                                                    HT-Scratch@TQU.vn
+                                                <a href="mailto:HT@idgostem.vn" className="hover:text-primary transition-colors">
+                                                    HT@idgostem.vn
                                                 </a>
                                             </div>
                                         </div>

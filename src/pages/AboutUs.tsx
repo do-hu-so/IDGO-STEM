@@ -45,7 +45,7 @@ const AboutUs = () => {
                                 </span>
                             </div>
                             <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight">
-                                Scratch Kid <span className="text-primary">TQU</span>
+                                IDGO<span className="text-primary">-STEM</span>
                             </h1>
                             <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
                                 Nền tảng học tập trực tuyến hỗ trợ dạy học STEM và tư duy lập trình cho học sinh tiểu học.
@@ -62,7 +62,7 @@ const AboutUs = () => {
                                 <h2 className="text-3xl font-bold mb-6 text-slate-800">Khởi nguồn & Sứ mệnh</h2>
                                 <div className="prose prose-lg text-slate-600">
                                     <p className="mb-4">
-                                        <strong>Scratch Kid TQU</strong> là một nền tảng học tập trực tuyến được xây dựng nhằm hỗ trợ dạy học STEM và làm quen với tư duy lập trình cho học sinh tiểu học thông qua phần mềm Scratch 3.0.
+                                        <strong>IDGO-STEM</strong> là một nền tảng học tập trực tuyến được xây dựng nhằm hỗ trợ dạy học STEM và làm quen với tư duy lập trình cho học sinh tiểu học thông qua phần mềm Scratch 3.0.
                                     </p>
                                     <p>
                                         Website được phát triển bởi nhóm khởi nghiệp đến từ <strong>Trường Đại học Tân Trào</strong>, với mục tiêu mang công nghệ giáo dục hiện đại đến gần hơn với nhà trường phổ thông, đặc biệt là các cơ sở giáo dục tiểu học.
@@ -240,7 +240,7 @@ const AboutUs = () => {
                         >
                             <Target className="w-16 h-16 mx-auto mb-6 text-white/90" />
                             <h2 className="text-2xl md:text-3xl font-black mb-6 max-w-4xl mx-auto leading-normal">
-                                "Scratch Kid TQU không chỉ mang ý nghĩa học thuật mà còn thể hiện tinh thần đổi mới sáng tạo, gắn nghiên cứu với thực tiễn giáo dục."
+                                "IDGO-STEM không chỉ mang ý nghĩa học thuật mà còn thể hiện tinh thần đổi mới sáng tạo, gắn nghiên cứu với thực tiễn giáo dục."
                             </h2>
                             <p className="text-lg text-white/90">
                                 Đồng hành cùng giáo dục Việt Nam trong kỷ nguyên số

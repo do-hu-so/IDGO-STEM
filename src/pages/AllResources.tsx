@@ -38,7 +38,7 @@ const AllResources = () => {
                             Kho Tài Liệu Miễn Phí
                         </h1>
                         <p className="text-lg text-muted-foreground">
-                            Tổng hợp tất cả tài liệu, giáo án, slide và video hướng dẫn giúp giáo viên triển khai lớp học lập trình Scratch hiệu quả.
+                            Tổng hợp tất cả tài liệu, giáo án, slide và video hướng dẫn giúp giáo viên triển khai lớp học lập trình hiệu quả.
                         </p>
                     </div>
 

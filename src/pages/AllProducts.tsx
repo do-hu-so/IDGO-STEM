@@ -132,7 +132,7 @@ const AllProducts = () => {
                         Tất cả <span className="text-primary">Sản phẩm</span>
                     </h1>
                     <p className="text-muted-foreground text-lg">
-                        Khám phá kho học liệu khổng lồ dành cho Scratch và STEM
+                        Khám phá kho học liệu khổng lồ dành cho STEM
                     </p>
                 </div>
 
