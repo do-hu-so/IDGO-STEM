@@ -37,14 +37,33 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState(false);
 
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
     // Fetch cart from Supabase when user logs in
     useEffect(() => {
         if (user) {
             fetchCart();
+        } else if (isAdmin) {
+            const adminCart = localStorage.getItem('adminCart');
+            if (adminCart) {
+                try {
+                    setItems(JSON.parse(adminCart));
+                } catch (e) {
+                    setItems([]);
+                }
+            } else {
+                setItems([]);
+            }
         } else {
             setItems([]);
         }
     }, [user]);
+
+    useEffect(() => {
+        if (isAdmin && !user) {
+            localStorage.setItem('adminCart', JSON.stringify(items));
+        }
+    }, [items, isAdmin, user]);
 
     const fetchCart = async () => {
         setLoading(true);
@@ -77,7 +96,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const addToCart = async (product: Product) => {
-        if (!user) {
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (!user && !isAdmin) {
             toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
             return;
         }
@@ -85,6 +105,19 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         const existingItem = items.find(item => item.id === product.id);
 
         try {
+            if (isAdmin && !user) {
+                if (existingItem) {
+                    setItems(prev => prev.map(item =>
+                        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    ));
+                    toast.success("Đã cập nhật số lượng trong giỏ hàng");
+                } else {
+                    setItems(prev => [...prev, { ...product, quantity: 1, cart_item_id: `admin-${Date.now()}` }]);
+                    toast.success("Đã thêm vào giỏ hàng");
+                }
+                return;
+            }
+
             if (existingItem) {
                 // Update local State
                 const newQuantity = existingItem.quantity + 1;
@@ -124,12 +157,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const removeFromCart = async (productId: string) => {
-        if (!user) return;
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (!user && !isAdmin) return;
 
         const currentItem = items.find(item => item.id === productId);
         if (!currentItem) return;
 
         setItems(prev => prev.filter(item => item.id !== productId));
+
+        if (isAdmin && !user) return; // Skip DB completely
 
         try {
             const { error } = await supabase
@@ -145,7 +181,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const updateQuantity = async (productId: string, quantity: number) => {
-        if (!user || quantity < 1) return;
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if ((!user && !isAdmin) || quantity < 1) return;
 
         const currentItem = items.find(item => item.id === productId);
         if (!currentItem) return;
@@ -153,6 +190,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         setItems(prev => prev.map(item =>
             item.id === productId ? { ...item, quantity } : item
         ));
+
+        if (isAdmin && !user) return; // Skip DB completely
 
         try {
             const { error } = await supabase
@@ -167,8 +206,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const clearCart = async () => {
-        if (!user) return;
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (!user && !isAdmin) return;
         setItems([]);
+        if (isAdmin && !user) {
+            localStorage.removeItem('adminCart');
+            return;
+        }
         try {
             await supabase.from('cart_items').delete().eq('user_id', user.id);
         } catch (error) {

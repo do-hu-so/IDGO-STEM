@@ -20,8 +20,10 @@ const Cart = () => {
     const [processing, setProcessing] = useState(false);
     const [userProfile, setUserProfile] = useState<any>(null);
 
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
     useEffect(() => {
-        if (!user && !loading) {
+        if (!user && !isAdmin && !loading) {
             navigate("/login");
         } else if (user) {
             // Fetch profile for phone number
@@ -30,8 +32,10 @@ const Cart = () => {
                 setUserProfile(data);
             };
             fetchProfile();
+        } else if (isAdmin) {
+            setUserProfile({ phone: 'Admin Phone', full_name: 'Admin User' });
         }
-    }, [user, navigate, loading]);
+    }, [user, isAdmin, navigate, loading]);
 
     const handleCheckoutClick = () => {
         if (items.length === 0) return;
@@ -41,6 +45,16 @@ const Cart = () => {
     const handleConfirmPayment = async () => {
         setProcessing(true);
         try {
+            if (isAdmin && !user) {
+                await clearCart();
+                setIsPaymentOpen(false);
+                toast.success("Đã tạo đơn hàng thành công (Admin Mode)!", {
+                    description: "Đơn hàng thử nghiệm của admin đã được ghi nhận."
+                });
+                navigate("/");
+                return;
+            }
+
             // 1. Create Order
             const { data: order, error: orderError } = await supabase
                 .from('orders')
