@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -6,45 +5,46 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { Download, Eye, Filter, Search, ShoppingCart, Star } from "lucide-react";
-import { products, ProductType, GradeLevel } from "@/data/products";
-import { useCart } from "@/context/CartContext";
+import { Download, Eye, Filter, Search, Star, Loader2 } from "lucide-react";
+import { useProducts, typeLabels, gradeLabels } from "@/hooks/useProducts";
+import type { ProductType, GradeLevel, Product } from "@/hooks/useProducts";
+import { useAuth, useCanPreview } from "@/context/AuthContext";
+import { downloadFile } from "@/lib/download";
 
 const AllProducts = () => {
-    const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
     const [selectedTypes, setSelectedTypes] = useState<ProductType[]>([]);
     const [selectedGrades, setSelectedGrades] = useState<GradeLevel[]>([]);
+    const canPreview = useCanPreview();
+    const { user } = useAuth();
 
-    // Check admin status
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const { data: products = [], isLoading } = useProducts({ publishedOnly: true });
 
-    // --- Constants ---
-    const typeLabels: Record<ProductType, string> = {
-        book: "Tài liệu",
-        video: "Video khóa học",
-        code: "Source Code",
-        ppt: "PowerPoint",
-        video_demo: "Video ứng dụng",
-        robotics: "Robotics",
+    const toggleType = (type: ProductType) => {
+        setSelectedTypes((prev) =>
+            prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+        );
     };
 
-    const gradeLabels: Record<GradeLevel, string> = {
-        3: "Lớp 3",
-        4: "Lớp 4",
-        5: "Lớp 5",
+    const toggleGrade = (grade: GradeLevel) => {
+        setSelectedGrades((prev) =>
+            prev.includes(grade) ? prev.filter((g) => g !== grade) : [...prev, grade]
+        );
     };
 
-    // --- Helpers from Resources.tsx ---
+    const filteredProducts = useMemo(() => {
+        let result = [...products];
+        if (selectedTypes.length > 0) {
+            result = result.filter((p) => selectedTypes.includes(p.type));
+        }
+        if (selectedGrades.length > 0) {
+            result = result.filter((p) => selectedGrades.includes(p.grade));
+        }
+        return result;
+    }, [products, selectedTypes, selectedGrades]);
+
+    // Helper functions
     const getEmbedUrl = (url: string) => {
         if (!url) return '';
         if (url.includes('docs.google.com') && url.includes('/edit')) {
@@ -71,52 +71,6 @@ const AllProducts = () => {
         return url;
     };
 
-    // --- Handlers ---
-    const toggleType = (type: ProductType) => {
-        setSelectedTypes((prev) =>
-            prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-        );
-    };
-
-    const toggleGrade = (grade: GradeLevel) => {
-        setSelectedGrades((prev) =>
-            prev.includes(grade) ? prev.filter((g) => g !== grade) : [...prev, grade]
-        );
-    };
-
-    // --- Hooks ---
-    const { addToCart } = useCart();
-
-    // --- Handlers ---
-    const handleAddToCart = (product: any) => {
-        addToCart(product);
-    };
-
-    // --- Filtering & Sorting Logic ---
-    const filteredProducts = useMemo(() => {
-        let result = [...products];
-
-        // Filter by Type
-        if (selectedTypes.length > 0) {
-            result = result.filter((p) => p.type.some(t => selectedTypes.includes(t)));
-        }
-
-        // Filter by Grade
-        if (selectedGrades.length > 0) {
-            result = result.filter((p) => selectedGrades.includes(p.grade));
-        }
-
-        // Sort by Price
-        if (sortOrder === "price-asc") {
-            result.sort((a, b) => a.price - b.price);
-        } else if (sortOrder === "price-desc") {
-            result.sort((a, b) => b.price - a.price);
-        }
-
-        return result;
-    }, [selectedTypes, selectedGrades, sortOrder]);
-
-    // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -124,9 +78,7 @@ const AllProducts = () => {
     return (
         <div className="min-h-screen flex flex-col bg-slate-50">
             <Header />
-
             <main className="flex-grow container mx-auto px-4 py-8">
-                {/* Page Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl md:text-4xl font-black text-slate-800 mb-2">
                         Tất cả <span className="text-primary">Sản phẩm</span>
@@ -137,9 +89,8 @@ const AllProducts = () => {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
-                    {/* --- Sidebar Filters --- */}
+                    {/* Sidebar Filters */}
                     <aside className="w-full lg:w-64 flex-shrink-0 space-y-6">
-                        {/* Filter Group: Loại tài liệu */}
                         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                                 <Filter className="w-4 h-4" /> Loại tài liệu
@@ -152,10 +103,7 @@ const AllProducts = () => {
                                             checked={selectedTypes.includes(type)}
                                             onCheckedChange={() => toggleType(type)}
                                         />
-                                        <Label
-                                            htmlFor={`type-${type}`}
-                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                        >
+                                        <Label htmlFor={`type-${type}`} className="text-sm font-medium cursor-pointer">
                                             {typeLabels[type]}
                                         </Label>
                                     </div>
@@ -163,7 +111,6 @@ const AllProducts = () => {
                             </div>
                         </div>
 
-                        {/* Filter Group: Lớp */}
                         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                                 <Filter className="w-4 h-4" /> Lớp học
@@ -176,10 +123,7 @@ const AllProducts = () => {
                                             checked={selectedGrades.includes(grade as GradeLevel)}
                                             onCheckedChange={() => toggleGrade(grade as GradeLevel)}
                                         />
-                                        <Label
-                                            htmlFor={`grade-${grade}`}
-                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                        >
+                                        <Label htmlFor={`grade-${grade}`} className="text-sm font-medium cursor-pointer">
                                             {gradeLabels[grade as GradeLevel]}
                                         </Label>
                                     </div>
@@ -188,34 +132,22 @@ const AllProducts = () => {
                         </div>
                     </aside>
 
-                    {/* --- Main Content --- */}
+                    {/* Main Content */}
                     <div className="flex-grow">
-                        {/* Toolbar */}
-                        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div className="text-sm text-muted-foreground font-medium">
                                 Hiển thị <span className="text-foreground font-bold">{filteredProducts.length}</span> sản phẩm
                             </div>
-
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm font-semibold whitespace-nowrap">Sắp xếp theo:</span>
-                                <Select value={sortOrder} onValueChange={(v: any) => setSortOrder(v)}>
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Mặc định" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="default">Mặc định</SelectItem>
-                                        <SelectItem value="price-asc">Giá: Thấp đến Cao</SelectItem>
-                                        <SelectItem value="price-desc">Giá: Cao đến Thấp</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
                         </div>
 
-                        {/* Product Grid */}
-                        {filteredProducts.length > 0 ? (
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                            </div>
+                        ) : filteredProducts.length > 0 ? (
                             <div className="space-y-12">
                                 {(Object.keys(typeLabels) as ProductType[]).map((type) => {
-                                    const groupProducts = filteredProducts.filter(p => p.type.includes(type));
+                                    const groupProducts = filteredProducts.filter(p => p.type === type);
                                     if (groupProducts.length === 0) return null;
 
                                     return (
@@ -233,7 +165,7 @@ const AllProducts = () => {
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                                 {groupProducts.map((product, index) => (
                                                     <motion.div
-                                                        key={`${type}-${product.id}`}
+                                                        key={product.id}
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true }}
@@ -243,9 +175,12 @@ const AllProducts = () => {
                                                         {/* Thumbnail */}
                                                         <div className="relative aspect-video bg-white overflow-hidden border-b border-slate-100">
                                                             <img
-                                                                src={getDriveImageSrc(product.image)}
+                                                                src={getDriveImageSrc(product.thumbnail_url)}
                                                                 alt={product.title}
                                                                 className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+                                                                onError={(e) => {
+                                                                    (e.target as HTMLImageElement).src = 'https://placehold.co/400x300?text=No+Image';
+                                                                }}
                                                             />
                                                             <div className="absolute top-2 right-2 bg-slate-900/10 px-2 py-1 rounded text-xs font-bold shadow-sm backdrop-blur-sm">
                                                                 {gradeLabels[product.grade]}
@@ -255,7 +190,7 @@ const AllProducts = () => {
                                                         {/* Content */}
                                                         <div className="p-4 flex flex-col flex-grow">
                                                             <div className="text-xs text-primary font-bold mb-1 uppercase tracking-wider">
-                                                                {product.type.map(t => typeLabels[t]).join(" + ")}
+                                                                {typeLabels[product.type]}
                                                             </div>
                                                             <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2" title={product.title}>
                                                                 {product.title}
@@ -270,29 +205,15 @@ const AllProducts = () => {
                                                             <div className="flex items-center gap-1 mb-4">
                                                                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                                                 <span className="font-semibold text-sm">{product.rating}</span>
-                                                                <span className="text-xs text-muted-foreground">({product.reviews} đánh giá)</span>
+                                                                <span className="text-xs text-muted-foreground">({product.reviews_count} đánh giá)</span>
                                                             </div>
 
                                                             <div className="mt-auto pt-4 border-t border-slate-100 flex flex-col gap-3">
-                                                                <div className="flex items-center justify-between">
-                                                                    <div className="flex-shrink-0">
-                                                                        <div className="text-lg font-black text-red-500">
-                                                                            {product.price.toLocaleString('vi-VN')}đ
-                                                                        </div>
-                                                                        {product.originalPrice && (
-                                                                            <div className="text-xs text-muted-foreground line-through">
-                                                                                {product.originalPrice.toLocaleString('vi-VN')}đ
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                    {isAdmin ? (
+                                                                <div className="flex items-center justify-end">
+                                                                    {(product.preview_url || product.file_url) ? (
                                                                         <Dialog>
                                                                             <DialogTrigger asChild>
-                                                                                <Button
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    className="text-muted-foreground hover:text-primary"
-                                                                                >
+                                                                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
                                                                                     <Eye className="w-4 h-4 mr-1" /> Xem trước
                                                                                 </Button>
                                                                             </DialogTrigger>
@@ -302,7 +223,7 @@ const AllProducts = () => {
                                                                                 </div>
                                                                                 <div className="flex-grow w-full h-full pt-14 pb-4 px-4 flex items-center justify-center">
                                                                                     <iframe
-                                                                                        src={getEmbedUrl(product.previewUrl)}
+                                                                                        src={getEmbedUrl(product.preview_url || product.file_url)}
                                                                                         className="w-full h-full rounded-lg bg-white"
                                                                                         allow="autoplay"
                                                                                         title="Preview"
@@ -315,21 +236,23 @@ const AllProducts = () => {
                                                                             variant="ghost"
                                                                             size="sm"
                                                                             className="text-muted-foreground hover:text-primary"
-                                                                            onClick={() => toast.error("Vui lòng thanh toán trước khi xem")}
+                                                                            onClick={() => toast.info("Sản phẩm này chưa có bản xem trước")}
                                                                         >
                                                                             <Eye className="w-4 h-4 mr-1" /> Xem trước
                                                                         </Button>
                                                                     )}
                                                                 </div>
 
-                                                                <Button
-                                                                    size="sm"
-                                                                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                                                                    onClick={() => handleAddToCart(product)}
-                                                                >
-                                                                    <ShoppingCart className="w-4 h-4 mr-2" />
-                                                                    Thêm vào giỏ
-                                                                </Button>
+                                                                {(product.download_url || product.file_url) && (
+                                                                    <Button
+                                                                        size="sm"
+                                                                        className="w-full cursor-pointer"
+                                                                        onClick={() => downloadFile(product.download_url || product.file_url!, product.title)}
+                                                                    >
+                                                                        <Download className="w-4 h-4 mr-2" />
+                                                                        Tải xuống
+                                                                    </Button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </motion.div>
@@ -355,9 +278,9 @@ const AllProducts = () => {
                         )}
                     </div>
                 </div>
-            </main >
+            </main>
             <Footer />
-        </div >
+        </div>
     );
 };
 

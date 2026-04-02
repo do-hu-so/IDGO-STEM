@@ -184,9 +184,7 @@ const Cart = () => {
                                                     <Plus className="w-3 h-3" />
                                                 </Button>
                                             </div>
-                                            <div className="font-black text-lg text-primary">
-                                                {(item.price * item.quantity).toLocaleString('vi-VN')}đ
-                                            </div>
+                                            <div></div>
                                         </div>
                                     </div>
                                 </div>
@@ -204,14 +202,9 @@ const Cart = () => {
                                         <span className="text-slate-600">Số lượng sản phẩm:</span>
                                         <span className="font-bold">{itemCount}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-600">Tạm tính:</span>
-                                        <span className="font-medium">{totalAmount.toLocaleString('vi-VN')}đ</span>
-                                    </div>
-                                    <Separator />
                                     <div className="flex justify-between items-center text-lg">
                                         <span className="font-bold text-slate-800">Thành tiền:</span>
-                                        <span className="font-black text-2xl text-primary">{totalAmount.toLocaleString('vi-VN')}đ</span>
+                                        <span className="font-black text-2xl text-primary">Liên hệ</span>
                                     </div>
                                 </CardContent>
                                 <CardFooter>
@@ -256,7 +249,7 @@ const Cart = () => {
                             <Separator />
                             <div className="flex justify-between items-center">
                                 <span className="text-slate-500 text-sm">Số tiền:</span>
-                                <span className="font-black text-xl text-red-500">{totalAmount.toLocaleString('vi-VN')}đ</span>
+                                <span className="font-black text-xl text-red-500">Liên hệ</span>
                             </div>
                         </div>
 
